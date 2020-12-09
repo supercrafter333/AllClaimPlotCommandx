@@ -17,6 +17,10 @@ class AllClaimPlotCommand extends PluginBase implements Listener
     {
         $this->saveResource("config.yml");
         $config = new Config($this->getDataFolder() . "config.yml", 2);
+        if ($this->getServer()->getPluginManager()->getPlugin("MyPlot") == null) {
+            $this->getLogger()->error("You need the plugin MyPlot to use this plugin!");
+            $this->getServer()->getPluginManager()->disablePlugin($this);
+        }
         if ($config->exists("version") && $config->get("version") == "1.0.0") {
             return;
         } else {

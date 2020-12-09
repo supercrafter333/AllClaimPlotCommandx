@@ -3,6 +3,8 @@ version: 1.0.0
 api: 3.0.0
 main: supercrafter333\AllClaimPlotCommand\AllClaimPlotCommand
 author: supercrafter333
+depend:
+  - MyPlot
 
 commands:
   allclaimplot:
