@@ -1,5 +1,5 @@
 # AllClaimPlotCommand
-Wich this plugin you can give all online players on your server automatically a plot!
+With this plugin you can instantly automatically give a plot to all online players on your server!
 
 ### Commands + Permissions
 ``/allclaimplot   |   allclaimplotcommand.allclaimplot.cmd``
