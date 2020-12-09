@@ -1,4 +1,4 @@
-# AllClaimPlotsCommand
+# AllClaimPlotCommand
 Wich this plugin you can give all online players on your server automatically a plot!
 
 ### License
