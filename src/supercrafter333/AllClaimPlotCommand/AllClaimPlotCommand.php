@@ -35,16 +35,22 @@ class AllClaimPlotCommand extends PluginBase implements Listener
         $config = new Config($this->getDataFolder() . "config.yml", 2);
         $myplot = MyPlot::getInstance();
         if ($cmd->getName() == "allclaimplot") {
-            if ($s->hasPermission("allclaimplotcommand.allclaimplot.cmd")) {
-                foreach ($this->getServer()->getOnlinePlayers() as $onlinePlayer) {
-                    $freePlot = $myplot->getNextFreePlot("Plots");
-                    $myplot->teleportPlayerToPlot($onlinePlayer, $freePlot);
-                    $myplot->claimPlot($freePlot, $onlinePlayer->getName());
+            if ($s instanceof Player) {
+                if ($s->hasPermission("allclaimplotcommand.allclaimplot.cmd")) {
+                    foreach ($this->getServer()->getOnlinePlayers() as $onlinePlayer) {
+                        $plotlevels = $myplot->getPlotLevels();
+                        if ($s->getLevel()->getName() == $plotlevel)
+                    $freePlot = $myplot->getNextFreePlot($s->getLevel()->getName());
+                        $myplot->teleportPlayerToPlot($onlinePlayer, $freePlot);
+                        $myplot->claimPlot($freePlot, $onlinePlayer->getName());
+                    }
+                    $s->sendMessage($config->get("successfull-message"));
+                    $this->getServer()->broadcastMessage($config->get("broadcast-successfull-message"));
+                } else {
+                    $s->sendMessage($config->get("no-permission-message"));
                 }
-                $s->sendMessage($config->get("successfull-message"));
-                $this->getServer()->broadcastMessage($config->get("broadcast-successfull-message"));
             } else {
-                $s->sendMessage($config->get("no-permission-message"));
+                $s->sendMessage("This Command is only avaible In-Game!");
             }
         }
         return true;
