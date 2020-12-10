@@ -39,7 +39,7 @@ class AllClaimPlotCommand extends PluginBase implements Listener
                 if ($s->hasPermission("allclaimplotcommand.allclaimplot.cmd")) {
                     foreach ($this->getServer()->getOnlinePlayers() as $onlinePlayer) {
                         $plotlevels = $myplot->getPlotLevels();
-                        if ($s->getLevel()->getName() == $plotlevel)
+                        if ($s->getLevel()->getName() == $plotlevels)
                     $freePlot = $myplot->getNextFreePlot($s->getLevel()->getName());
                         $myplot->teleportPlayerToPlot($onlinePlayer, $freePlot);
                         $myplot->claimPlot($freePlot, $onlinePlayer->getName());

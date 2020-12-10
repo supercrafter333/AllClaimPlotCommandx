@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="464421eb-afb2-4970-ae43-dedc5b607dde" name="Default Changelist" comment="some fixes">
+    <list default="true" id="464421eb-afb2-4970-ae43-dedc5b607dde" name="Default Changelist" comment="some improvements and bug fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/supercrafter333/AllClaimPlotCommand/AllClaimPlotCommand.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/supercrafter333/AllClaimPlotCommand/AllClaimPlotCommand.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -57,7 +56,7 @@
       <workItem from="1607528789154" duration="32000" />
       <workItem from="1607529244426" duration="2384000" />
       <workItem from="1607538950198" duration="15000" />
-      <workItem from="1607611010367" duration="702000" />
+      <workItem from="1607611010367" duration="977000" />
     </task>
     <task id="LOCAL-00001" summary="Add files">
       <created>1607529282486</created>
@@ -80,7 +79,14 @@
       <option name="project" value="LOCAL" />
       <updated>1607530181938</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="some improvements and bug fixes">
+      <created>1607611843410</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1607611843410</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -114,6 +120,7 @@
     <confirmMoveToFailedCommit value="2" />
     <MESSAGE value="Add files" />
     <MESSAGE value="some fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="some fixes" />
+    <MESSAGE value="some improvements and bug fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="some improvements and bug fixes" />
   </component>
 </project>
