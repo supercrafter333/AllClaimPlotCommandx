@@ -37,10 +37,9 @@ class AllClaimPlotCommand extends PluginBase implements Listener
         if ($cmd->getName() == "acp") {
             if ($s instanceof Player) {
                 if ($s->hasPermission("allclaimplotcommand.allclaimplot.cmd")) {
-                    $plotlevels = $myplot->getPlotLevels();
                     if ($myplot->isLevelLoaded($s->getLevel()->getFolderName())) {
-                        $freePlot = $myplot->getNextFreePlot($s->getLevel()->getName());
                     foreach ($this->getServer()->getLevelByName($s->getLevel()->getName())->getPlayers() as $onlinePlayer) {
+                        $freePlot = $myplot->getNextFreePlot($s->getLevel()->getName());
                             $myplot->teleportPlayerToPlot($onlinePlayer, $freePlot);
                             $myplot->claimPlot($freePlot, $onlinePlayer->getName());
                         }
