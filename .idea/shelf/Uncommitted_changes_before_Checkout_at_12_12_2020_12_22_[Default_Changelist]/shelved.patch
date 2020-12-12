@@ -1,0 +1,119 @@
+Index: plugin.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>name: AllClaimPlotCommand\r\nversion: 1.0.0\r\napi: 3.0.0\r\nmain: supercrafter333\\AllClaimPlotCommand\\AllClaimPlotCommand\r\nauthor: supercrafter333\r\ndepend:\r\n  - MyPlot\r\n\r\ncommands:\r\n  allclaimplot:\r\n    description: Give every player automatically a plot!\r\n\r\npermissions:\r\n  allclaimplot.admin:\r\n    description: All permissions for the Plugin\r\n    children:\r\n      allclaimplotcommand.allclaimplot.cmd:\r\n        description: Command permission
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/plugin.yml b/plugin.yml
+--- a/plugin.yml	(revision b9d80b0e60d9fafd5844696029ec91d521e0c0d7)
++++ b/plugin.yml	(date 1607771353902)
+@@ -7,8 +7,10 @@
+   - MyPlot
+ 
+ commands:
+-  allclaimplot:
++  acp:
+     description: Give every player automatically a plot!
++    aliases:
++      - allclaimplot
+ 
+ permissions:
+   allclaimplot.admin:
+Index: src/supercrafter333/AllClaimPlotCommand/AllClaimPlotCommand.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\n\r\nnamespace supercrafter333\\AllClaimPlotCommand;\r\n\r\nuse MyPlot\\MyPlot;\r\nuse pocketmine\\command\\Command;\r\nuse pocketmine\\command\\CommandSender;\r\nuse pocketmine\\event\\Listener;\r\nuse pocketmine\\Player;\r\nuse pocketmine\\plugin\\PluginBase;\r\nuse pocketmine\\utils\\Config;\r\n\r\nclass AllClaimPlotCommand extends PluginBase implements Listener\r\n{\r\n\r\n    public function onEnable()\r\n    {\r\n        $this->saveResource(\"config.yml\");\r\n        $config = new Config($this->getDataFolder() . \"config.yml\", 2);\r\n        if ($this->getServer()->getPluginManager()->getPlugin(\"MyPlot\") == null) {\r\n            $this->getLogger()->error(\"You need the plugin MyPlot to use this plugin!\");\r\n            $this->getServer()->getPluginManager()->disablePlugin($this);\r\n        }\r\n        if ($config->exists(\"version\") && $config->get(\"version\") == \"1.0.0\") {\r\n            return;\r\n        } else {\r\n            $this->getLogger()->error(\"OUTDATED CONFIG.YML!! Your config.yml is outdated! Please delete the file and restart your server to Update the config.yml!\");\r\n            $this->getServer()->getPluginManager()->disablePlugin($this);\r\n        }\r\n        $this->getServer()->getPluginManager()->registerEvents($this, $this);\r\n    }\r\n\r\n    public function onCommand(CommandSender $s, Command $cmd, string $label, array $args): bool\r\n    {\r\n        $config = new Config($this->getDataFolder() . \"config.yml\", 2);\r\n        $myplot = MyPlot::getInstance();\r\n        if ($cmd->getName() == \"allclaimplot\") {\r\n            if ($s instanceof Player) {\r\n                if ($s->hasPermission(\"allclaimplotcommand.allclaimplot.cmd\")) {\r\n                    $plotlevels = $myplot->getPlotLevels();\r\n                    if ($s->getLevel() == $plotlevels) {\r\n                        $freePlot = $myplot->getNextFreePlot($s->getLevel()->getName());\r\n                    foreach ($this->getServer()->getLevelByName($s->getLevel()->getName())->getPlayers() as $onlinePlayer) {\r\n                            $myplot->teleportPlayerToPlot($onlinePlayer, $freePlot);\r\n                            $myplot->claimPlot($freePlot, $onlinePlayer->getName());\r\n                        }\r\n                        $s->sendMessage($config->get(\"successfull-message\"));\r\n                        $this->getServer()->broadcastMessage($config->get(\"broadcast-successfull-message\"));\r\n                    }\r\n                } else {\r\n                    $s->sendMessage($config->get(\"no-permission-message\"));\r\n                }\r\n            } else {\r\n                $s->sendMessage(\"This Command is only avaible In-Game!\");\r\n            }\r\n        }\r\n        return true;\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/supercrafter333/AllClaimPlotCommand/AllClaimPlotCommand.php b/src/supercrafter333/AllClaimPlotCommand/AllClaimPlotCommand.php
+--- a/src/supercrafter333/AllClaimPlotCommand/AllClaimPlotCommand.php	(revision b9d80b0e60d9fafd5844696029ec91d521e0c0d7)
++++ b/src/supercrafter333/AllClaimPlotCommand/AllClaimPlotCommand.php	(date 1607771847260)
+@@ -34,11 +34,11 @@
+     {
+         $config = new Config($this->getDataFolder() . "config.yml", 2);
+         $myplot = MyPlot::getInstance();
+-        if ($cmd->getName() == "allclaimplot") {
++        if ($cmd->getName() == "acp") {
+             if ($s instanceof Player) {
+                 if ($s->hasPermission("allclaimplotcommand.allclaimplot.cmd")) {
+                     $plotlevels = $myplot->getPlotLevels();
+-                    if ($s->getLevel() == $plotlevels) {
++                    if ($s->getLevel()->getName() == $plotlevels) {
+                         $freePlot = $myplot->getNextFreePlot($s->getLevel()->getName());
+                     foreach ($this->getServer()->getLevelByName($s->getLevel()->getName())->getPlayers() as $onlinePlayer) {
+                             $myplot->teleportPlayerToPlot($onlinePlayer, $freePlot);
+@@ -46,6 +46,8 @@
+                         }
+                         $s->sendMessage($config->get("successfull-message"));
+                         $this->getServer()->broadcastMessage($config->get("broadcast-successfull-message"));
++                    } else {
++                        $s->sendMessage($config->get("not-in-plot-world-message"));
+                     }
+                 } else {
+                     $s->sendMessage($config->get("no-permission-message"));
+Index: resources/config.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#here you can set the messages\r\nsuccessfull-message: \"§aYou've successfully given a plot to all players!\"\r\nbroadcast-successfull-message: \"§aEach player was given a plot of land!\"\r\nno-permision-message: \"§cSorry! You do not have permissions to use this command!\"\r\n\r\n#don't change this\r\nversion: 1.0.0\r\n\r\n#plugin by supercrafter333 with Apache 2.0 License
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/config.yml b/resources/config.yml
+--- a/resources/config.yml	(revision b9d80b0e60d9fafd5844696029ec91d521e0c0d7)
++++ b/resources/config.yml	(date 1607771612447)
+@@ -2,6 +2,7 @@
+ successfull-message: "§aYou've successfully given a plot to all players!"
+ broadcast-successfull-message: "§aEach player was given a plot of land!"
+ no-permision-message: "§cSorry! You do not have permissions to use this command!"
++not-in-plot-world-message: "§cYou are not in a plot world!"
+ 
+ #don't change this
+ version: 1.0.0
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"464421eb-afb2-4970-ae43-dedc5b607dde\" name=\"Default Changelist\" comment=\"some bug fixes\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/supercrafter333/AllClaimPlotCommand/AllClaimPlotCommand.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/supercrafter333/AllClaimPlotCommand/AllClaimPlotCommand.php\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"ComposerSettings\">\r\n    <execution />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"master\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GithubDefaultAccount\">\r\n    <option name=\"defaultAccountId\" value=\"2e508f06-5925-44cd-9ed0-902efc58cd33\" />\r\n  </component>\r\n  <component name=\"PhpWorkspaceProjectConfiguration\">\r\n    <include_path>\r\n      <path value=\"$PROJECT_DIR$/../../Downloads/MyPlot-master/src\" />\r\n    </include_path>\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"1lQUPkxDqN21mI052pbzaVigX2a\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">\r\n    <property name=\"RunOnceActivity.OpenProjectViewOnStart\" value=\"true\" />\r\n    <property name=\"RunOnceActivity.ShowReadmeOnStart\" value=\"true\" />\r\n    <property name=\"WebServerToolWindowFactoryState\" value=\"false\" />\r\n    <property name=\"last_opened_file_path\" value=\"$PROJECT_DIR$\" />\r\n    <property name=\"settings.editor.selected.configurable\" value=\"preferences.fileTypes\" />\r\n    <property name=\"vue.rearranger.settings.migration\" value=\"true\" />\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"SvnConfiguration\">\r\n    <configuration>C:\\Users\\crwgd\\AppData\\Roaming\\Subversion</configuration>\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"464421eb-afb2-4970-ae43-dedc5b607dde\" name=\"Default Changelist\" comment=\"\" />\r\n      <created>1607528787061</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1607528787061</updated>\r\n      <workItem from=\"1607528789154\" duration=\"32000\" />\r\n      <workItem from=\"1607529244426\" duration=\"2384000\" />\r\n      <workItem from=\"1607538950198\" duration=\"15000\" />\r\n      <workItem from=\"1607611010367\" duration=\"2734000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Add files\">\r\n      <created>1607529282486</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1607529282486</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"some fixes\">\r\n      <created>1607529950737</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1607529950737</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"some fixes\">\r\n      <created>1607530181938</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1607530181938</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"some improvements and bug fixes\">\r\n      <created>1607611843410</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1607611843410</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"some improvements and bug fixes\">\r\n      <created>1607611991567</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1607611991567</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00006\" summary=\"some bug fixes\">\r\n      <created>1607612011422</created>\r\n      <option name=\"number\" value=\"00006\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1607612011423</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"7\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"dev\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n    <option name=\"oldMeFiltersMigrated\" value=\"true\" />\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <confirmMoveToFailedCommit value=\"2\" />\r\n    <MESSAGE value=\"Add files\" />\r\n    <MESSAGE value=\"some fixes\" />\r\n    <MESSAGE value=\"some improvements and bug fixes\" />\r\n    <MESSAGE value=\"some bug fixes\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"some bug fixes\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision b9d80b0e60d9fafd5844696029ec91d521e0c0d7)
++++ b/.idea/workspace.xml	(date 1607772133484)
+@@ -3,6 +3,8 @@
+   <component name="ChangeListManager">
+     <list default="true" id="464421eb-afb2-4970-ae43-dedc5b607dde" name="Default Changelist" comment="some bug fixes">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/plugin.yml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/resources/config.yml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/supercrafter333/AllClaimPlotCommand/AllClaimPlotCommand.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/supercrafter333/AllClaimPlotCommand/AllClaimPlotCommand.php" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+@@ -56,7 +58,9 @@
+       <workItem from="1607528789154" duration="32000" />
+       <workItem from="1607529244426" duration="2384000" />
+       <workItem from="1607538950198" duration="15000" />
+-      <workItem from="1607611010367" duration="2734000" />
++      <workItem from="1607611010367" duration="2823000" />
++      <workItem from="1607620195195" duration="135000" />
++      <workItem from="1607770498782" duration="1634000" />
+     </task>
+     <task id="LOCAL-00001" summary="Add files">
+       <created>1607529282486</created>
+@@ -100,7 +104,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1607612011423</updated>
+     </task>
+-    <option name="localTasksCounter" value="7" />
++    <task id="LOCAL-00007" summary="some bug fixes">
++      <created>1607613750900</created>
++      <option name="number" value="00007" />
++      <option name="presentableId" value="LOCAL-00007" />
++      <option name="project" value="LOCAL" />
++      <updated>1607613750900</updated>
++    </task>
++    <option name="localTasksCounter" value="8" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
