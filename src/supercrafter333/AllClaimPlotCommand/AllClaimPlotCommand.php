@@ -17,6 +17,10 @@ class AllClaimPlotCommand extends PluginBase implements Listener
     {
         $this->saveResource("config.yml");
         $config = new Config($this->getDataFolder() . "config.yml", 2);
+        if ($this->getServer()->getPluginManager()->getPlugin("MyPlot") == null) {
+            $this->getLogger()->error("You need the plugin MyPlot to use this plugin!");
+            $this->getServer()->getPluginManager()->disablePlugin($this);
+        }
         if ($config->exists("version") && $config->get("version") == "1.0.0") {
             return;
         } else {
@@ -30,17 +34,26 @@ class AllClaimPlotCommand extends PluginBase implements Listener
     {
         $config = new Config($this->getDataFolder() . "config.yml", 2);
         $myplot = MyPlot::getInstance();
-        if ($cmd->getName() == "allclaimplot") {
-            if ($s->hasPermission("allclaimplotcommand.allclaimplot.cmd")) {
-                foreach ($this->getServer()->getOnlinePlayers() as $onlinePlayer) {
-                    $freePlot = $myplot->getNextFreePlot("Plots");
-                    $myplot->teleportPlayerToPlot($onlinePlayer, $freePlot);
-                    $myplot->claimPlot($freePlot, $onlinePlayer->getName());
+        if ($cmd->getName() == "acp") {
+            if ($s instanceof Player) {
+                if ($s->hasPermission("allclaimplotcommand.allclaimplot.cmd")) {
+                    $plotlevels = $myplot->getPlotLevels();
+                    if ($s->getLevel()->getName() == $plotlevels) {
+                        $freePlot = $myplot->getNextFreePlot($s->getLevel()->getName());
+                    foreach ($this->getServer()->getLevelByName($s->getLevel()->getName())->getPlayers() as $onlinePlayer) {
+                            $myplot->teleportPlayerToPlot($onlinePlayer, $freePlot);
+                            $myplot->claimPlot($freePlot, $onlinePlayer->getName());
+                        }
+                        $s->sendMessage($config->get("successfull-message"));
+                        $this->getServer()->broadcastMessage($config->get("broadcast-successfull-message"));
+                    } else {
+                        $s->sendMessage($config->get("not-in-plot-world-message"));
+                    }
+                } else {
+                    $s->sendMessage($config->get("no-permission-message"));
                 }
-                $s->sendMessage($config->get("successfull-message"));
-                $this->getServer()->broadcastMessage($config->get("broadcast-successfull-message"));
             } else {
-                $s->sendMessage($config->get("no-permission-message"));
+                $s->sendMessage("This Command is only avaible In-Game!");
             }
         }
         return true;
